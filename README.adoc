@@ -1,12 +1,29 @@
-# Dash button container for ARMHF
+# Dash button container for Slack presence
 
-image:https://images.microbadger.com/badges/image/cgatay/dash-button-rpi.svg[Get your own image badge on microbadger.com,link=https://microbadger.com/images/cgatay/dash-button-rpi]
-image:https://images.microbadger.com/badges/version/cgatay/dash-button-rpi.svg[Get your own image badge on microbadger.com, link=https://microbadger.com/images/cgatay/dash-button-rpi "Get your own version badge on microbadger.com"]
+image:https://images.microbadger.com/badges/image/cgatay/dash-button-slack.svg[Get your own image badge on microbadger.com,link=https://microbadger.com/images/cgatay/dash-button-rpi]
+image:https://images.microbadger.com/badges/version/cgatay/dash-button-slack.svg[Get your own image badge on microbadger.com, link=https://microbadger.com/images/cgatay/dash-button-rpi "Get your own version badge on microbadger.com"]
 
 
 WARNING: This container can only be used when running on the docker host network layer, as it basically scans ARP/UDP packets to find out when your Dash button is registering on your local network.
 
-It consists in a basic script doing a HTTP Call when the button with the specified mac address is seen on the network. The HTTP call is carrying basic authentication header. Its main use case for the time being is triggering a Virtual Switch in Domoticz, which in turns triggers events / scenariis.
+It consists in a basic script doing a HTTP Call when the button with the specified mac address is seen on the network. The HTTP call allows to post a temporary status change to Slack API
+
+## Building image
+
+### For a RPI (ARMHF)
+
+[source,bash]
+----
+docker build -t dash-button-slack -f Dockerfile.rpi .
+----
+
+### For a x86 host
+
+[source,bash]
+----
+docker build -t dash-button-slack -f Dockerfile .
+----
+
 
 ## Finding your dash button
 
@@ -14,19 +31,29 @@ The first step is to find your button on your local network, you will need to ge
 
 [source,bash]
 ----
-docker run -ti --rm --net=host cgatay/dash-button-rpi findbutton
+docker run -ti --rm --net=host cgatay/dash-button-slack findbutton
 ----
 
 Press the dash button, it will print out a lot of records (depending on the size of your network), pay attention to the lines mentionning "Amazon" or "unknown" (starting with `34:d2`), the MAC Address is at the beginning of the line separated by ":". Write it down, and go to the next step.
 
+## Slack setup
+
+At first you will need to get your Slack API token. This basic implementation uses Slack Legacy API token which you can generate on the [legacy token page](https://api.slack.com/custom-integrations/legacy-tokens). Generate one for the team where you want your dash button to post a status update. 
+
+
 ## Running a container per button
 
-Copy and change the content of the `sample.env` file to your liking (I tend to use the brand labeled on the button).
-Then edit the URL you want to call to your liking (if you're using Domoticz, you need to fill in the server IP and switch index), and add the MAC Address you found in the step 1 in the proper variable.
+Copy and change the content of the `sample-slack.env` file to your liking (I tend to use the brand labeled on the button).
+Then edit the settings to your liking : 
+
+ * TOKEN with the previously generated token
+ * MSG with the status message you want to set
+ * EMOTICON with the emoji code you want to use
+ * DURATION for the duration (in minutes)  of your "dash" status, you will automatically be set back without custom status afterwards
 
 [source,bash]
 ----
-BRAND='mybrand' docker run -d --name=dash-$BRAND --restart=always --net=host --env-file $BRAND.env cgatay/dash-button-rpi
+BRAND='mybrand' docker run -d --name=dash-$BRAND --restart=always --net=host --env-file $BRAND.env cgatay/dash-button-slack
 ----
 
 ### Running all containers
