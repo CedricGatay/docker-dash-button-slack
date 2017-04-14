@@ -1,7 +1,7 @@
 # Dash button container for Slack presence
 
-image:https://images.microbadger.com/badges/image/cgatay/dash-button-slack.svg[Get your own image badge on microbadger.com,link=https://microbadger.com/images/cgatay/dash-button-sample]
-image:https://images.microbadger.com/badges/version/cgatay/dash-button-slack.svg[Get your own image badge on microbadger.com, link=https://microbadger.com/images/cgatay/dash-button-sample "Get your own version badge on microbadger.com"]
+image:https://images.microbadger.com/badges/image/cgatay/dash-button-slack.svg[Get your own image badge on microbadger.com,link=https://microbadger.com/images/cgatay/dash-button-slack]
+image:https://images.microbadger.com/badges/version/cgatay/dash-button-slack.svg[Get your own image badge on microbadger.com, link=https://microbadger.com/images/cgatay/dash-button-slack "Get your own version badge on microbadger.com"]
 
 
 WARNING: This container can only be used when running on the docker host network layer, as it basically scans ARP/UDP packets to find out when your Dash button is registering on your local network.
